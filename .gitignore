@@ -1,0 +1,9 @@
+.buildozer/
+bin/
+*.apk
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/

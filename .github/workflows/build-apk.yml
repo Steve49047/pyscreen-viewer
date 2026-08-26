@@ -1,0 +1,57 @@
+name: Build ARM32 APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential git python3-pip \
+            autoconf libtool pkg-config zlib1g-dev \
+            libncurses5-dev libncursesw5-dev \
+            cmake libffi-dev libssl-dev automake \
+            zip unzip openjdk-17-jdk
+
+      - name: Install Buildozer
+        run: |
+          pip install --upgrade pip
+          pip install buildozer cython==0.29.37
+
+      - name: Generate icon
+        run: |
+          pip install Pillow
+          python3 -c "
+          from PIL import Image, ImageDraw
+          img = Image.new('RGBA', (512, 512), (30, 144, 255, 255))
+          draw = ImageDraw.Draw(img)
+          draw.rectangle([100, 100, 412, 412], fill=(255, 255, 255, 255))
+          draw.rectangle([150, 150, 362, 362], fill=(30, 144, 255, 255))
+          img.save('android/icon.png')
+          "
+
+      - name: Build APK with Buildozer
+        run: |
+          cd android
+          yes | buildozer android debug || true
+          ls -la bin/
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pyscreen-arm32-apk
+          path: android/bin/*.apk
+          if-no-files-found: warn
