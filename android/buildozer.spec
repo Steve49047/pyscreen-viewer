@@ -7,7 +7,7 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,json
 version = 1.0.0
 
-requirements = python3,kivy,websocket-client,pillow
+requirements = python3,kivy,pillow,websocket-client
 
 android.permissions = INTERNET,ACCESS_NETWORK_STATE
 android.api = 31

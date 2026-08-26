@@ -21,9 +21,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             build-essential git python3-pip \
-            autoconf libtool pkg-config zlib1g-dev \
+            autoconf automake libtool libltdl-dev \
+            pkg-config zlib1g-dev \
             libncurses5-dev libncursesw5-dev \
-            cmake libffi-dev libssl-dev automake \
+            cmake libffi-dev libssl-dev \
             zip unzip openjdk-17-jdk
 
       - name: Install Buildozer
@@ -46,7 +47,7 @@ jobs:
       - name: Build APK with Buildozer
         run: |
           cd android
-          yes | buildozer android debug || true
+          yes | buildozer android debug
           ls -la bin/
 
       - name: Upload APK artifact
@@ -54,4 +55,4 @@ jobs:
         with:
           name: pyscreen-arm32-apk
           path: android/bin/*.apk
-          if-no-files-found: warn
+          if-no-files-found: error
